@@ -1,24 +1,35 @@
 package main.util;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-
-import main.model.Task;
-import main.model.User;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class HibernateUtil {
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory;
 
-    private static SessionFactory buildSessionFactory() {
+    static {
         try {
-            Configuration configuration = new Configuration();
-            configuration.configure("hibernate.cfg.xml");
-            configuration.addAnnotatedClass(User.class);
-            configuration.addAnnotatedClass(Task.class);
-            return configuration.buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
+            StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder()
+                    .configure("hibernate.cfg.xml")
+                    .build();
+
+            Metadata metadata = new MetadataSources(standardRegistry)
+                    .getMetadataBuilder()
+                    .build();
+
+            sessionFactory = metadata.getSessionFactoryBuilder().build();
+            
+            // Выводим сообщения о созданных таблицах
+            System.out.println("Таблица users создана или уже существует");
+            System.out.println("Таблица tasks создана или уже существует");
+            System.out.println("Таблица notes создана или уже существует");
+            System.out.println("Таблица note_folders создана или уже существует");
+            
+        } catch (Exception e) {
+            System.err.println("Ошибка инициализации Hibernate: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -27,6 +38,8 @@ public class HibernateUtil {
     }
 
     public static void shutdown() {
-        getSessionFactory().close();
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
     }
 } 

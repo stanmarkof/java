@@ -6,18 +6,24 @@
     <session-factory>
         <!-- Настройки подключения к базе данных -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jpln?allowPublicKeyRetrieval=true&amp;useSSL=false</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jpln?createDatabaseIfNotExist=true</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">marina17</property>
         
-        <!-- Настройки Hibernate -->
+        <!-- Настройки диалекта -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        
+        <!-- Автоматическое создание таблиц -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        
+        <!-- Отображение SQL запросов -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">update</property>
         
         <!-- Маппинг сущностей -->
         <mapping class="main.model.User"/>
         <mapping class="main.model.Task"/>
+        <mapping class="main.model.Note"/>
+        <mapping class="main.model.NoteFolder"/>
     </session-factory>
 </hibernate-configuration> 

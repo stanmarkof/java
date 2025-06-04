@@ -1096,3 +1096,186 @@ body .main-container.calendar-page .note-item {
     outline: none;
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
+
+/* Кнопка создания папки */
+.create-folder-btn {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+.create-folder-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.create-folder-btn i {
+    font-size: 16px;
+    color: #4CAF50;
+}
+
+/* Стили для папок */
+.folders-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.folder-item {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    width: 100%;
+}
+
+.folder-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-right: 40px;
+}
+
+.folder-icon {
+    color: #4CAF50;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.folder-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.folder-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+    padding-right: 40px;
+}
+
+.folder-content {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.folder-item.expanded .folder-content {
+    display: block;
+}
+
+.folder-item.expanded .folder-icon {
+    transform: rotate(90deg);
+}
+
+.folder-notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.folder-note {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.folder-note:hover {
+    background-color: #e9ecef;
+}
+
+.folder-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.folder-item:hover .folder-actions {
+    opacity: 1;
+}
+
+.folder-action-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 16px;
+    transition: color 0.2s;
+    border-radius: 50%;
+}
+
+.folder-action-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.folder-action-btn.delete:hover {
+    color: #dc3545;
+    background-color: #ffebee;
+}
+
+.folder-action-btn.edit:hover {
+    color: #007bff;
+    background-color: #e3f2fd;
+}
+
+/* Стили для выбора папки */
+.note-folder {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    background-color: white;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.note-folder:hover {
+    border-color: #4CAF50;
+}
+
+.note-folder:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.note-folder option {
+    padding: 8px;
+}

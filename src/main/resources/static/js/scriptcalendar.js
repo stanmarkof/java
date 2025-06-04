@@ -342,7 +342,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return `${year}-${month}-${day}T${hours}:${minutes}:00`;
             };
 
-            const taskDescription = taskElement.querySelector('.task-description').textContent.trim();
+            // Получаем описание задачи, исключая статус
+            const descriptionElement = taskElement.querySelector('.task-description');
+            const taskDescription = Array.from(descriptionElement.childNodes)
+                .filter(node => node.nodeType === Node.TEXT_NODE || !node.classList?.contains('task-footer'))
+                .map(node => node.textContent)
+                .join('')
+                .trim();
+
             const taskPriority = taskElement.querySelector('.task-priority').classList.contains('high') ? 'HIGH' :
                                taskElement.querySelector('.task-priority').classList.contains('medium') ? 'MEDIUM' : 'LOW';
 

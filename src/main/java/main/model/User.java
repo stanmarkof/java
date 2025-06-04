@@ -1,6 +1,9 @@
 package main.model;
 
 import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,19 +19,34 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Expose
     private String username;
 
     @Column(nullable = false, unique = true)
+    @Expose
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Expose(serialize = false)
     private List<Task> tasks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Expose(serialize = false)
+    private List<Note> notes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Expose(serialize = false)
+    private List<NoteFolder> folders;
 
     // Геттеры и сеттеры
 
@@ -70,5 +88,21 @@ public class User {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
+
+    public List<NoteFolder> getFolders() {
+        return folders;
+    }
+
+    public void setFolders(List<NoteFolder> folders) {
+        this.folders = folders;
     }
 }

@@ -8,7 +8,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import main.servlet.CalendarServlet;
 import main.servlet.IndexServlet;
 import main.servlet.LoginServlet;
+import main.servlet.NotesPageServlet;
 import main.servlet.NotesServlet;
+import main.servlet.NoteFolderServlet;
 import main.servlet.RegisterServlet;
 import main.servlet.TaskServlet;
 
@@ -26,7 +28,11 @@ public class Main {
         context.addServlet(new ServletHolder(new RegisterServlet()), "/register");
         context.addServlet(new ServletHolder(new TaskServlet()), "/tasks/*");
         context.addServlet(new ServletHolder(new CalendarServlet()), "/calendar");
-        context.addServlet(new ServletHolder(new NotesServlet()), "/notes");
+        context.addServlet(new ServletHolder(new NotesPageServlet()), "/notes");
+        
+        // Регистрация API сервлетов
+        context.addServlet(new ServletHolder(new NotesServlet()), "/api/notes/*");
+        context.addServlet(new ServletHolder(new NoteFolderServlet()), "/api/folders/*");
         
         // Настройка обработки статических ресурсов
         ServletHolder staticHolder = new ServletHolder("static", DefaultServlet.class);
