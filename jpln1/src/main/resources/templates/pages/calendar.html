@@ -120,6 +120,17 @@
                 <!-- Описание -->
                 <div class="form-group">
                     <label for="taskDescription">Описание:</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="editor-btn" onclick="document.execCommand('bold', false, null)" title="Жирный">
+                            <b>Ж</b>
+                        </button>
+                        <button type="button" class="editor-btn" onclick="document.execCommand('italic', false, null)" title="Курсив">
+                            <i>К</i>
+                        </button>
+                        <button type="button" class="editor-btn" onclick="document.execCommand('underline', false, null)" title="Подчеркнутый">
+                            <u>Ч</u>
+                        </button>
+                    </div>
                     <div class="note-text" contenteditable="true" id="taskDescription" placeholder="Введите описание задачи"></div>
                 </div>
 
@@ -171,8 +182,19 @@
 
                 <!-- Описание -->
                 <div class="form-group">
-                    <label for="noteContent">Описание:</label>
-                    <div class="note-text" contenteditable="true" id="noteContent" placeholder="Введите описание заметки"></div>
+                    <label for="noteDescription">Описание:</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="editor-btn" onclick="document.execCommand('bold', false, null)" title="Жирный">
+                            <b>Ж</b>
+                        </button>
+                        <button type="button" class="editor-btn" onclick="document.execCommand('italic', false, null)" title="Курсив">
+                            <i>К</i>
+                        </button>
+                        <button type="button" class="editor-btn" onclick="document.execCommand('underline', false, null)" title="Подчеркнутый">
+                            <u>Ч</u>
+                        </button>
+                    </div>
+                    <div class="note-text" contenteditable="true" id="noteDescription" placeholder="Введите описание заметки"></div>
                 </div>
             </div>
         </form>
@@ -180,7 +202,6 @@
 
     <!-- Подключение JS -->
     <script src="/js/scriptcalendar.js"></script>
-    <script src="/js/textEditor.js"></script>
     <script>
         // Функция для перехода на другую страницу
         function navigateTo(url) {
