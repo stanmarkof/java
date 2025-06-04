@@ -749,8 +749,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const foldersContainer = document.querySelector('.folders-container');
             if (!foldersContainer) {
                 console.error('Folders container not found');
-                return;
-            }
+            return;
+        }
             foldersContainer.innerHTML = '';
             
             if (Array.isArray(folders)) {

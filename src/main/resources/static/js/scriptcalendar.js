@@ -474,8 +474,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function openNoteModal() {
-        const modal = document.getElementById('noteModal');
-        modal.style.display = 'block';
+        const noteModal = document.getElementById('noteModal');
+        const noteId = document.getElementById('noteId');
+        const noteTitle = document.getElementById('noteTitle');
+        const noteDescription = document.getElementById('noteDescription');
+        const noteFolder = document.getElementById('noteFolder');
+
+        if (noteId) noteId.value = '';
+        if (noteTitle) noteTitle.value = '';
+        if (noteDescription) noteDescription.innerHTML = '';
+        if (noteFolder) noteFolder.value = '';
+        if (noteModal) noteModal.style.display = 'block';
+        
+        loadFolderSelect();
     }
 
     // Обработчики закрытия модальных окон
@@ -540,6 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Получаем элементы формы
         const noteContentElement = document.querySelector('#noteModal .note-text');
         const noteTitleElement = document.querySelector('#noteModal .note-title');
+        const noteFolderElement = document.querySelector('#noteModal .note-folder');
         
         // Проверяем существование элементов
         if (!noteContentElement || !noteTitleElement) {
@@ -554,9 +566,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Получаем значения
         const noteContent = noteContentElement.innerHTML;
         const noteTitle = noteTitleElement.value;
+        const folderId = noteFolderElement ? noteFolderElement.value : '';
         
         console.log('Заголовок заметки:', noteTitle);
         console.log('Содержимое заметки:', noteContent);
+        console.log('ID папки:', folderId);
         
         // Проверяем, что поля не пустые
         if (!noteTitle.trim()) {
@@ -569,42 +583,40 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         
-        // Создаем FormData
-        const formData = new FormData();
-        formData.append('title', noteTitle);
-        formData.append('content', noteContent);
-        formData.append('returnTo', 'calendar');
-        
-        // Логируем данные
-        console.log('Отправляемые данные:');
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
+        // Создаем объект с данными заметки
+        const noteData = {
+            title: noteTitle,
+            content: noteContent,
+            folderId: folderId ? parseInt(folderId) : null
+        };
 
         // Отправляем запрос
         console.log('Отправка запроса...');
-        fetch('/notes', {
+        fetch('/api/notes', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
-            body: new URLSearchParams(formData)
+            body: JSON.stringify(noteData)
         })
         .then(response => {
             console.log('Получен ответ от сервера');
             console.log('Статус:', response.status);
             
-            // Если статус 200, считаем что заметка сохранена
-            if (response.status === 200) {
-                // Закрываем модальное окно
-                document.getElementById('noteModal').style.display = 'none';
-                // Очищаем форму
-                this.reset();
-                // Показываем сообщение об успехе
-                alert('Заметка успешно сохранена');
-            } else {
+            if (!response.ok) {
                 throw new Error('Ошибка при сохранении заметки');
             }
+            
+            return response.json();
+        })
+        .then(data => {
+            // Закрываем модальное окно
+            document.getElementById('noteModal').style.display = 'none';
+            // Очищаем форму
+            this.reset();
+            // Показываем сообщение об успехе
+            alert('Заметка успешно сохранена');
         })
         .catch(error => {
             console.error('Ошибка:', error);
@@ -675,4 +687,82 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // Функция для загрузки папок в выпадающий список
+    function loadFolderSelect() {
+        const folderSelect = document.getElementById('noteFolder');
+        if (!folderSelect) {
+            console.error('Folder select element not found');
+            return Promise.reject('Folder select element not found');
+        }
+
+        return fetch('/api/folders/', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке папок');
+            }
+            return response.json();
+        })
+        .then(folders => {
+            console.log('Loaded folders:', folders);
+            // Очищаем список, оставляя только опцию "Без папки"
+            folderSelect.innerHTML = '<option value="">Без папки</option>';
+            
+            // Добавляем папки в список
+            if (Array.isArray(folders)) {
+                folders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder.id;
+                    option.textContent = folder.name;
+                    folderSelect.appendChild(option);
+                });
+            }
+            return folders;
+        })
+        .catch(error => {
+            console.error('Error loading folders:', error);
+            throw error;
+        });
+    }
+
+    // Модифицируем функцию сохранения заметки
+    function saveNote(event) {
+        event.preventDefault();
+        
+        const noteId = document.getElementById('noteId').value;
+        const noteTitle = document.getElementById('noteTitle').value;
+        const noteDescription = document.getElementById('noteDescription').innerHTML;
+        const folderId = document.getElementById('noteFolder').value;
+        
+        const note = {
+            id: noteId ? parseInt(noteId) : null,
+            title: noteTitle,
+            content: noteDescription,
+            folderId: folderId ? parseInt(folderId) : null
+        };
+
+        const method = noteId ? 'PUT' : 'POST';
+        const url = noteId ? `/api/notes/${noteId}` : '/api/notes';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(note)
+        })
+        .then(response => response.json())
+        .then(() => {
+            document.getElementById('noteModal').style.display = 'none';
+            loadNotes();
+        })
+        .catch(error => console.error('Ошибка при сохранении заметки:', error));
+    }
 }); 
