@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Заметки</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <script src="/js/scriptnotes.js" type="text/javascript"></script>
+    <script src="/js/textEditor.js"></script>
+</head>
+<body>
+    <!-- Боковое меню -->
+    <div class="side-menu">
+        <button class="menu-item" onclick="navigateTo('/calendar')">Календарь</button>
+        <button class="menu-item" onclick="navigateTo('/notes')">Заметки</button>
+        <button class="menu-item" onclick="navigateTo('/tasks')">Задачи</button>
+    </div>
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="menu-btn">&#9776;</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск..." />
+        </div>
+        <div class="options-btn">&#8942;</div>
+    </div>
+
+    <div class="main-container">
+        <h2>Заметки пользователя: <span id="usernameSpan" th:text="${username}">Пользователь</span></h2>
+
+        <!-- Список заметок -->
+        <div
+            th:each="note : ${notes}"
+            class="note-item"
+            th:attr="data-id=${note.id}, data-title=${note.title}, data-content=${note.content}"
+            onclick="openEditModal(this)"
+        >
+            <h3 class="note-title" th:text="${note.title}">Заголовок</h3>
+            <p class="note-content" th:utext="${note.content}">Текст</p>
+        </div>
+    </div>
+
+    <div class="add-btn">+</div>
+
+    <!-- Модальное окно заметки -->
+    <div class="note-modal" id="noteModal" style="display: none;">
+        <form method="post" action="/notes">
+            <div class="note-content">
+                <div class="note-header">
+                    <button type="button" class="back-btn" id="backBtn">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button type="submit" class="save-btn" id="saveBtn">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button type="button" id="deleteNoteBtn" class="delete-btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="id" id="noteId" />
+                <input type="hidden" name="content" id="hiddenNoteContent" />
+                <input type="text" class="note-title" name="title" id="noteTitle" placeholder="Название" required />
+                <div class="note-text" contenteditable="true" id="noteContent"></div>
+
+                <div class="editor-buttons">
+                    <button type="button" class="editor-btn" data-action="hiliteColor" data-color="yellow" title="Выделение">
+                        <i class="fa-solid fa-highlighter"></i>
+                    </button>
+                    <button type="button" class="editor-btn" data-action="bold"><b>Ж</b></button>
+                    <button type="button" class="editor-btn" data-action="italic"><i>К</i></button>
+                    <button type="button" class="editor-btn" data-action="underline"><u>Ч</u></button>
+                    <button type="button" class="editor-btn" data-action="list" title="Список">
+                        <i class="fa-regular fa-square-check"></i>
+                    </button>
+                    <button type="button" class="editor-btn" data-action="palette" title="Палитра">
+                        <i class="fas fa-palette"></i>
+                    </button>
+
+                    <div class="color-palette" id="colorPalette" style="display: none;">
+                        <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
+                        <div class="color-option" data-color="#ffb4b4" style="background-color: #ffb4b4;"></div>
+                        <div class="color-option" data-color="#fdd5a1" style="background-color: #fdd5a1;"></div>
+                        <div class="color-option" data-color="#fef0ab" style="background-color: #fef0ab;"></div>
+                        <div class="color-option" data-color="#c2fcbe" style="background-color: #c2fcbe;"></div>
+                        <div class="color-option" data-color="#c0ebfc" style="background-color: #c0ebfc;"></div>
+                        <div class="color-option" data-color="#e4ceff" style="background-color: #e4ceff;"></div>
+                    </div>
+
+                    <button type="button" class="editor-btn" title="Скрепка">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Функция для перехода на другую страницу
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

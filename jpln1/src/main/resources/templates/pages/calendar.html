@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner</title>
+    <!-- Подключение CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/calendar.css">
+    <!-- Подключение Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Боковое меню -->
+    <div class="side-menu">
+        <button class="menu-item" onclick="navigateTo('/calendar')">Календарь</button>
+        <button class="menu-item" onclick="navigateTo('/notes')">Заметки</button>
+        <button class="menu-item" onclick="navigateTo('/tasks')">Задачи</button>
+    </div>
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="menu-btn">&#9776;</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Поиск...">
+        </div>
+        <div class="options-btn">&#8942;</div>
+    </div>
+
+    <!-- Основной контейнер для календаря и задач -->
+    <div class="main-container calendar-page">
+        <!-- Календарь -->
+        <div class="calendar-container">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button class="nav-arrow left">❮</button>
+                    <h2>
+                        <span class="month" id="currentMonth">Январь</span>
+                        <span class="year" id="currentYear">2024</span>
+                    </h2>
+                    <button class="nav-arrow right">❯</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <!-- Дни недели будут сгенерированы здесь -->
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body">
+                        <!-- Дни месяца будут сгенерированы здесь -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Окно задач на день -->
+        <div class="task-container">
+            <h3 id="selected-date"></h3>
+            <div class="notes-grid">
+                <!-- Здесь будут отображаться задачи -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка создания -->
+    <div class="add-btn">+</div>
+
+    <!-- Контейнер для кнопок действия -->
+    <div class="action-buttons-container">
+        <button class="action-button">Заметки</button>
+        <button class="action-button">Задачи</button>
+        <button class="action-button">Напоминания</button>
+    </div>
+
+    <!-- Модальное окно задачи -->
+    <div class="note-modal" id="taskModal" style="display: none;">
+        <form method="post" action="/tasks" id="taskForm">
+            <div class="note-content">
+                <div class="note-header">
+                    <button type="button" class="back-btn" id="backBtn">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button type="submit" class="save-btn" id="saveBtn">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button type="button" id="deleteTaskBtn" class="delete-btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="id" id="taskId" />
+                
+                <!-- Заголовок -->
+                <div class="form-group">
+                    <label for="taskTitle">Заголовок:</label>
+                    <input type="text" class="note-title" name="title" id="taskTitle" placeholder="Введите заголовок задачи" required />
+                </div>
+
+                <!-- Дата -->
+                <div class="form-group">
+                    <label for="taskDate">День:</label>
+                    <input type="text" id="taskDate" name="date" placeholder="ДД-ММ-ГГГГ" required 
+                           onkeypress="return isNumberOrMinus(event)" oninput="formatDateInput(this)" />
+                </div>
+
+                <!-- Время начала и окончания -->
+                <div class="task-times">
+                    <div class="form-group">
+                        <label for="taskStartTime">Время начала:</label>
+                        <input type="text" id="taskStartTime" name="startTime" placeholder="ЧЧ-ММ" required 
+                               onkeypress="return isNumberOrMinus(event)" oninput="formatTimeInput(this)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="taskEndTime">Время окончания:</label>
+                        <input type="text" id="taskEndTime" name="endTime" placeholder="ЧЧ-ММ" required 
+                               onkeypress="return isNumberOrMinus(event)" oninput="formatTimeInput(this)" />
+                    </div>
+                </div>
+
+                <!-- Описание -->
+                <div class="form-group">
+                    <label for="taskDescription">Описание:</label>
+                    <div class="note-text" contenteditable="true" id="taskDescription" placeholder="Введите описание задачи"></div>
+                </div>
+
+                <!-- Приоритет и статус -->
+                <div class="task-options">
+                    <div class="form-group">
+                        <label for="taskPriority">Приоритет:</label>
+                        <select id="taskPriority" name="priority">
+                            <option value="LOW">Низкий</option>
+                            <option value="MEDIUM">Средний</option>
+                            <option value="HIGH">Высокий</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Статус:</label>
+                        <select id="taskStatus" name="completed">
+                            <option value="false">В процессе</option>
+                            <option value="true">Выполнено</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Модальное окно заметки -->
+    <div class="note-modal" id="noteModal" style="display: none;">
+        <form method="post" action="/notes" id="noteForm">
+            <div class="note-content">
+                <div class="note-header">
+                    <button type="button" class="back-btn" id="noteBackBtn">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button type="submit" class="save-btn" id="noteSaveBtn">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button type="button" id="deleteNoteBtn" class="delete-btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="id" id="noteId" />
+                
+                <!-- Заголовок -->
+                <div class="form-group">
+                    <label for="noteTitle">Заголовок:</label>
+                    <input type="text" class="note-title" name="title" id="noteTitle" placeholder="Введите заголовок заметки" required />
+                </div>
+
+                <!-- Описание -->
+                <div class="form-group">
+                    <label for="noteContent">Описание:</label>
+                    <div class="note-text" contenteditable="true" id="noteContent" placeholder="Введите описание заметки"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Подключение JS -->
+    <script src="/js/scriptcalendar.js"></script>
+    <script src="/js/textEditor.js"></script>
+    <script>
+        // Функция для перехода на другую страницу
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
+
