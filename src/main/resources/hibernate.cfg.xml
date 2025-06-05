@@ -25,5 +25,6 @@
         <mapping class="main.model.Task"/>
         <mapping class="main.model.Note"/>
         <mapping class="main.model.NoteFolder"/>
+        <mapping class="main.model.Reminder"/>
     </session-factory>
 </hibernate-configuration> 

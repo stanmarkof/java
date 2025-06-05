@@ -34,11 +34,10 @@
                 <h3 class="note-title" th:text="${task.title}">Название задачи</h3>
                 <div class="note-content" th:utext="${task.description}">Описание задачи</div>
                 <div class="task-info">
-                    <span class="task-date" th:text="'Начало: ' + ${#temporals.format(task.startTime, 'dd.MM.yyyy')}">Дата начала</span>
-                    <span class="task-date" th:if="${task.endTime}" th:text="'Окончание: ' + ${#temporals.format(task.endTime, 'dd.MM.yyyy')}">Дата окончания</span>
+                    <span class="task-date" th:text="'Начало: ' + ${#temporals.format(task.startTime, 'HH:mm')} + ' ' + ${#temporals.format(task.startTime, 'dd.MM.yyyy')}">Время начала</span>
+                    <span class="task-date" th:if="${task.endTime}" th:text="'Окончание: ' + ${#temporals.format(task.endTime, 'HH:mm')} + ' ' + ${#temporals.format(task.endTime, 'dd.MM.yyyy')}">Время окончания</span>
                     <span class="task-priority" th:text="'Приоритет: ' + ${task.priority}">Приоритет</span>
                     <div class="task-status">
-                        <input type="checkbox" th:checked="${task.completed}" th:onclick="'event.stopPropagation(); toggleTaskStatus(' + ${task.id} + ')'" />
                         <span th:text="${task.completed ? 'Выполнено' : 'В процессе'}">Статус</span>
                     </div>
                 </div>

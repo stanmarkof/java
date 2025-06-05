@@ -634,17 +634,19 @@ td:hover {
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
 }
 
 .task-status input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
+    display: none;
 }
 
 .task-status span {
     font-size: 0.75em;
     color: #718096;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #f7fafc;
 }
 
 .date-input-container {
